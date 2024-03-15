@@ -24,7 +24,7 @@ async function main(args) {
     user: args.user || null,
   });
 
-  return { body: completion };
+  return { body: JSON.stringify(completion) };
 }
 
 exports.main = main;
