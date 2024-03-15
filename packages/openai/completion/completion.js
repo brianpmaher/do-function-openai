@@ -24,7 +24,7 @@ async function main(args) {
     user: args.user || null,
   });
 
-  return { body: completion.data.choices[0].text };
+  return { body: completion };
 }
 
 exports.main = main;
