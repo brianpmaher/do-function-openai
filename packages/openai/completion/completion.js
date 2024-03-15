@@ -27,7 +27,7 @@ exports.main = async (event) => {
     return { body: "messages is required" };
   }
 
-  const debugLog = args.debug_log || false;
+  const debugLog = event.debug_log || false;
 
   if (debugLog) {
     console.log("event", event);
