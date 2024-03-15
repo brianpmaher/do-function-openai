@@ -1,6 +1,24 @@
 const OpenAI = require("openai");
 
+const apiKey = process.env["apiKey"];
+if (!apiKey) {
+  console.error("apiKey is required");
+}
+
+const openai = new OpenAI({ apiKey });
+if (!openai) {
+  console.error("openai is required");
+}
+
 exports.main = async (event) => {
+  if (!apiKey) {
+    return { body: "apiKey is required" };
+  }
+
+  if (!openai) {
+    return { body: "openai is required" };
+  }
+
   if (event.__ow_method !== "post") {
     return { body: "Please send a POST Request" };
   }
@@ -9,9 +27,11 @@ exports.main = async (event) => {
     return { body: "messages is required" };
   }
 
-  const openai = new OpenAI({
-    apiKey: process.env["apiKey"],
-  });
+  const debugLog = args.debug_log || false;
+
+  if (debugLog) {
+    console.log("event", event);
+  }
 
   const completion = await openai.chat.completions.create({
     messages: event.messages,
@@ -23,6 +43,10 @@ exports.main = async (event) => {
     top_p: event.top_p || 1,
     user: event.user || null,
   });
+
+  if (debugLog) {
+    console.log("completion", completion);
+  }
 
   return { body: completion };
 };
