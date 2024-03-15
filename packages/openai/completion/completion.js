@@ -1,29 +1,30 @@
-const { Configuration, OpenAIApi } = require("openai");
+const OpenAI = require("openai");
 
-const configuration = new Configuration({
-    apiKey: process.env['apiKey'],
+const openai = new OpenAI({
+  apiKey: process.env["apiKey"],
 });
 
-const openai = new OpenAIApi(configuration);
-
-
 async function main(args) {
-    if (args.__ow_method !== 'post'){
-        return { "body": "Please send a POST Request"};
-    }
-    if (args.prompt){
-        const completion = await openai.createCompletion({
-            model: "text-davinci-002",
-            prompt: args.prompt,
-            max_tokens: args.max_tokens || 16,
-            temperature: args.temperature || 0.9,
-            top_p: args.top_p || 1
-          });
-        
-        return {"body": completion.data.choices[0].text}
-    } else {
-        return {"body": "Please send a prompt"}
-    }
+  if (args.__ow_method !== "post") {
+    return { body: "Please send a POST Request" };
   }
 
-exports.main = main
+  if (!args.messages) {
+    return { body: "messages is required" };
+  }
+
+  const completion = await openai.chat.completions.create({
+    messages: args.messages,
+    model: args.model || "gpt-3.5-turbo",
+    max_tokens: args.max_tokens || null,
+    n: args.n || 1,
+    stream: args.stream || false,
+    temperature: args.temperature || 1,
+    top_p: args.top_p || 1,
+    user: args.user || null,
+  });
+
+  return { body: completion.data.choices[0].text };
+}
+
+exports.main = main;
