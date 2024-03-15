@@ -1,10 +1,6 @@
 const OpenAI = require("openai");
 
-const openai = new OpenAI({
-  apiKey: process.env["apiKey"],
-});
-
-async function main(event) {
+exports.main = async (event) => {
   if (event.__ow_method !== "post") {
     return { body: "Please send a POST Request" };
   }
@@ -12,6 +8,10 @@ async function main(event) {
   if (!event.messages) {
     return { body: "messages is required" };
   }
+
+  const openai = new OpenAI({
+    apiKey: process.env["apiKey"],
+  });
 
   const completion = await openai.chat.completions.create({
     messages: event.messages,
@@ -25,6 +25,4 @@ async function main(event) {
   });
 
   return { body: completion };
-}
-
-exports.main = main;
+};
