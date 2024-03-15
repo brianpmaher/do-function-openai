@@ -6,9 +6,6 @@ if (!apiKey) {
 }
 
 const openai = new OpenAI({ apiKey });
-if (!openai) {
-  console.error("openai is required");
-}
 
 exports.main = async (event) => {
   if (!apiKey) {
@@ -27,12 +24,6 @@ exports.main = async (event) => {
     return { body: "messages is required" };
   }
 
-  const debugLog = event.debug_log || false;
-
-  if (debugLog) {
-    console.log("event", event);
-  }
-
   const completion = await openai.chat.completions.create({
     messages: event.messages,
     model: event.model || "gpt-3.5-turbo",
@@ -43,10 +34,6 @@ exports.main = async (event) => {
     top_p: event.top_p || 1,
     user: event.user || null,
   });
-
-  if (debugLog) {
-    console.log("completion", completion);
-  }
 
   return { body: completion };
 };
